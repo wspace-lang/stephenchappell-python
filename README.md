@@ -25,3 +25,11 @@ Runs programs in "Programs" and creates *.WSO files when needed.
 Can be executed directly by double-click or on the command line.
 
 If run on command line, add "ASM" flag to dump program assembly.
+
+## Whitespace Stack Calculator
+
+This is a stack-based calculator that can run in Whitespace.
+
+Several functions and strings are written in its 1330 lines.
+
+Modifications were made to the interpreter for debugging it.
