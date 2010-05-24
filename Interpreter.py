@@ -462,6 +462,11 @@ DEBUG_WHITESPACE = False
 
 class Program:
 
+    # Version System
+    _MAGIC_ = 'WS'
+    VERSION = 0, 2, 9, 0
+
+    # Argument Tables
     NO_ARGS = INS.COPY, INS.SWAP, INS.AWAY, INS.ADD, \
               INS.SUB, INS.MUL, INS.DIV, INS.MOD, \
               INS.SET, INS.GET, INS.BACK, INS.EXIT, \
@@ -533,7 +538,7 @@ class Program:
             msvcrt.getwch()
         buff = ''
         char = msvcrt.getwch()
-        while char != '\r' or not buff:
+        while char != '\r' or not buff or len(buff) == 1 and buff in '+-':
             if char in '\x00\xE0':
                 msvcrt.getwch()
             elif char in '+-' and not buff:
@@ -612,6 +617,7 @@ class Program:
 
     @classmethod
     def load(cls, path):
+        # Loads programs and handles optimized files.
         ws = path + '.ws'
         cp = path + '.wso'
         compiled = False
@@ -620,9 +626,13 @@ class Program:
             if os.path.isfile(ws):
                 if os.path.getmtime(ws) > os.path.getmtime(cp):
                     compiled = False
+        final = cls._final()
+        cls._check(final)
         if compiled:
             try:
                 with open(cp, 'rb') as file:
+                    code = file.read(len(final))
+                    cls._check(code)
                     data = file.read()
                 return cls(pickle.loads(zlib.decompress(data)))
             except:
@@ -633,8 +643,25 @@ class Program:
         serialized = pickle.dumps(program, pickle.HIGHEST_PROTOCOL)
         optimized = zlib.compress(serialized, 9)
         with open(cp, 'wb') as file:
-            file.write(optimized)
+            file.write(final + optimized)
         return cls(program)
+
+    @classmethod
+    def _final(cls):
+        # Builds a unique identifier for this verion.
+        return b'\0' + cls._MAGIC_.encode() + bytes(cls.VERSION) + b'\0'
+
+    @classmethod
+    def _check(cls, code):
+        # Check version code, including _final() code.
+        if len(code) != 8:
+            raise ValueError('Code is not of right length!')
+        if code[0] != 0 or code[7] != 0:
+            raise ValueError('Code markers are not present!')
+        if len(cls._MAGIC_) != 2 or code[1:3] != cls._MAGIC_.encode():
+            raise ValueError('Magic value is not correct!')
+        if len(cls.VERSION) != 4 or code[3:7] != bytes(cls.VERSION):
+            raise ValueError('Version numbers are not equal!')
 
     def assembly(self, names=False):
         disassemble(self.__data, names)
