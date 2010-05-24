@@ -278,7 +278,7 @@ def main():
             else:
                 div, mod = divmod((time.clock() - start) * 1000, 1)
                 args = int(div), '{:.3}'.format(mod)[1:]
-                print('DONE: Comipled in {}{} ms'.format(*args))
+                print('DONE: Compiled in {}{} ms'.format(*args))
     handle_close(error, command_line)
 
 def get_source():
