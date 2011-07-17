@@ -142,7 +142,6 @@ def check_code(program, line, text, ins):
         program.append(ins)
     else:
         syntax_error(line)
-        
 
 def parse_label(line, text):
     if not text or text[0] != ' ':
