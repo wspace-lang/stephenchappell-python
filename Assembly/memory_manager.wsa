@@ -66,8 +66,8 @@
 #     left_shift(number, shift) -> number
 #     right_shift(number, shift) -> number
 #     divmod(x, y) -> div, mod
-#     value_to_array(value) -> array
-#     array_to_value(array) -> value
+#     value_to_array(value, base) -> array
+#     array_to_value(array, base) -> value
 #     uint_bits(number) -> bits
 #     uint_xor(a, b) -> xor_value
 
@@ -2098,7 +2098,7 @@ part "__save_stack_loop_body"
 #         raise Exception(221)
 #     if array_size < size:
 #         raise Exception(222)
-#     addr = array + array size
+#     addr = array + array_size
 #     temp = malloc(3)
 #     temp[0] = addr
 #     temp[1] = size
